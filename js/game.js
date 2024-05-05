@@ -13,7 +13,9 @@ var config = {
             debug: false // debug
         }
     },
+
     scene:[scene1]
+
 }
 
-var game = new Phaser.Game(config)
+var game = new Phaser.Game(config) 
