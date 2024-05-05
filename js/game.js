@@ -10,7 +10,7 @@ var config = {
         default:"arcade", // tipo de fisica que va a utilizar 
         arcade: {
             gravity: { y : 800},// la gravedad del juego
-            debug: false // debug
+            debug: true // debug
         }
     },
 
@@ -20,3 +20,4 @@ var config = {
 var game = new Phaser.Game(config);
 var cursors;
 var jugador;
+var plataforma;
