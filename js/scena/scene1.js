@@ -20,7 +20,7 @@ class scene1 extends Phaser.Scene {
 
         this.anims.create({
             key: "caminar",
-            frames: this.anims.generateFrameNumbers("jugador",{start:7,end:13}),
+            frames: this.anims.generateFrameNumbers("jugador",{start:16,end:23}),
             frameRate:10,
             repeat:-1
         });
@@ -46,11 +46,23 @@ class scene1 extends Phaser.Scene {
         // manejo del jugador en el plano x
         if (cursors.right.isDown) {  // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de 180
             jugador.setVelocityX(180); 
+            jugador.anims.play("caminar",true);// reproduce la animación caminar
+            jugador.setOffset(35,18);
+            if(jugador.flipX==true) {
+                jugador.x=jugador.x+150
+            }
+           jugador.flipX=false;
          }else if (cursors.left.isDown) {
              jugador.setVelocityX(-180); // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de -180
+             jugador.anims.play("caminar",true);// reproduce la animación caminar
+             jugador.setOffset(3,18);
+             if(jugador.flipX==false) {
+                jugador.x=jugador.x-55
+            }
+            jugador.flipX=true; // espejar la imagen
          }else {
-             jugador.setVelocityX(0); // si no estan ninguna de estas teclas presionadas su velocidad es 0
-             jugador.anims.play("detenido",true);
+            jugador.setVelocityX(0); // si no estan ninguna de estas teclas presionadas su velocidad es 0
+            jugador.anims.play("detenido",true);
          }
          if (cursors.up.isDown && jugador.body.touching.down) {  /// si se presiona la tecla arriba y  el personaje esta tocando algo abajo salta
             jugador.setVelocityY(-500);
