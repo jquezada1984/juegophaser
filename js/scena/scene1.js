@@ -48,17 +48,17 @@ class scene1 extends Phaser.Scene {
             jugador.setVelocityX(180); 
             jugador.anims.play("caminar",true);// reproduce la animación caminar
             jugador.setOffset(35,18);
-            if(jugador.flipX==true) {
+          /*  if(jugador.flipX==true) {
                 jugador.x=jugador.x+150
-            }
+            }*/
            jugador.flipX=false;
          }else if (cursors.left.isDown) {
              jugador.setVelocityX(-180); // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de -180
              jugador.anims.play("caminar",true);// reproduce la animación caminar
              jugador.setOffset(3,18);
-             if(jugador.flipX==false) {
+            /* if(jugador.flipX==false) {
                 jugador.x=jugador.x-55
-            }
+            }*/
             jugador.flipX=true; // espejar la imagen
          }else {
             jugador.setVelocityX(0); // si no estan ninguna de estas teclas presionadas su velocidad es 0
