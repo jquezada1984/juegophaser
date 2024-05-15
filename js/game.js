@@ -3,8 +3,8 @@ var config = {
     scale: {
         mode:Phaser.Scale.FIT, // scala automaticamente
         autoCenter:Phaser.Scale.CENTER_BOTH, // centra automaticamente
-        width:900, // ancho de pantalla
-        height:600,// alto de pantalla
+        width:1800, // ancho de pantalla
+        height:1200,// alto de pantalla
     },
     physics : {
         default:"arcade", // tipo de fisica que va a utilizar 

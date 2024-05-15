@@ -14,9 +14,9 @@ class scene1 extends Phaser.Scene {
     }
 
     create () {
-//        let fondo = this.add.image(900,600,"fondo"); // agregamos el fondo a la escena
- //       fondo.setScale(2);
-  //      fondo.setDepth(-1);
+        this.fondo = this.add.tileSprite(0, 0, this.sys.game.config.width, this.sys.game.config.height, "fondo");
+        this.fondo.setOrigin(0, 0);
+
 
         //animaciones
         this.anims.create({
@@ -35,7 +35,11 @@ class scene1 extends Phaser.Scene {
 
         //////////PISOS///////////////
         const map = this.make.tilemap({key:"tilemap"});
-        const tileset = [ map.addTilesetImage("Business-Center-Tileset-Pixel-Art4","fondo"), map.addTilesetImage("Objetos","Objetos"), map.addTilesetImage("Pisos","Pisos")];
+        const tileset = [ 
+                map.addTilesetImage("Business-Center-Tileset-Pixel-Art4","fondo"), 
+                map.addTilesetImage("Objetos","Objetos"), 
+                map.addTilesetImage("Pisos","Pisos")
+            ];
         this.pisos = map.createLayer("Piso1",tileset);
         this.pisos.setCollisionByProperty({colision:true});
         
@@ -45,10 +49,13 @@ class scene1 extends Phaser.Scene {
         jugador.setScale(1);// escalamos el jugador
         jugador.setSize(30,50); //Tamaño del Jugador
         jugador.setOffset(35,18);
-        //jugador.setCollideWorldBounds(true);// hacemos que colisione con el borde del mundo
-        
-        //jugador= this.physics.add.sprite(0,1150,"jugador"); //agregamos el jugador a la escena         
-        this.cameras.main.startFollow(jugador); 
+
+
+
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.cameras.main.startFollow(jugador);
+        this.cameras.main.setZoom(3); 
+
         //Teclas
         cursors = this.input.keyboard.createCursorKeys();
         this.physics.add.collider(jugador,this.pisos);
