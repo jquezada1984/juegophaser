@@ -3,8 +3,8 @@ var config = {
     scale: {
         mode:Phaser.Scale.FIT, // scala automaticamente
         autoCenter:Phaser.Scale.CENTER_BOTH, // centra automaticamente
-        width:1920, // ancho de pantalla
-        height:1080,// alto de pantalla
+        width:900, // ancho de pantalla
+        height:600,// alto de pantalla
     },
     physics : {
         default:"arcade", // tipo de fisica que va a utilizar 
@@ -20,4 +20,4 @@ var config = {
 var game = new Phaser.Game(config);
 var cursors;
 var jugador;
-var plataforma;
+var pisos;

@@ -5,11 +5,19 @@ class scene1 extends Phaser.Scene {
     }
  
     preload () {
-        this.load.image("fondo",".//assets/Background.png"); // decimos donde esta la imagen a phaser65.14
+        this.load.image("fondo",".//assets/rooms/Business-Center-Tileset-Pixel-Art4.png"); // decimos donde esta la imagen a phaser65.14
         this.load.spritesheet("jugador",".//assets/sprites/complet01.png",{ frameWidth: 65.14,frameHeight: 79}); // Cargamos la imagen del jugador
+        //////////////////Pisos///////////
+        this.load.image("Objetos",".//assets/rooms/Objetos.png"); // objetos en la pantalla
+        this.load.image("Pisos",".//assets/rooms/Pisos.png"); // objetos en la pantalla
+        this.load.tilemapTiledJSON("tilemap",".//assets/rooms/mapa.json") // donde esta el achivo json        
     }
 
     create () {
+//        let fondo = this.add.image(900,600,"fondo"); // agregamos el fondo a la escena
+ //       fondo.setScale(2);
+  //      fondo.setDepth(-1);
+
         //animaciones
         this.anims.create({
             key: "detenido", // nombre de la animacion
@@ -25,21 +33,26 @@ class scene1 extends Phaser.Scene {
             repeat:-1
         });
 
-        // Fondo
-        let fondo = this.add.image(930,530,"fondo"); // agregamos el fondo a la escena
-        fondo.setScale(3.5);//escalamos el fondo
-        //plataforma
-
+        //////////PISOS///////////////
+        const map = this.make.tilemap({key:"tilemap"});
+        const tileset = [ map.addTilesetImage("Business-Center-Tileset-Pixel-Art4","fondo"), map.addTilesetImage("Objetos","Objetos"), map.addTilesetImage("Pisos","Pisos")];
+        this.pisos = map.createLayer("Piso1",tileset);
+        this.pisos.setCollisionByProperty({colision:true});
+        
 
         //Jugador
-        jugador= this.physics.add.sprite(0,0,"jugador"); //agregamos el jugador a la escena         
-        jugador.setScale(3);// escalamos el jugador
+        jugador= this.physics.add.sprite(66,1150,"jugador"); //agregamos el jugador a la escena         
+        jugador.setScale(1);// escalamos el jugador
         jugador.setSize(30,50); //Tamaño del Jugador
         jugador.setOffset(35,18);
-        jugador.setCollideWorldBounds(true);// hacemos que colisione con el borde del mundo
+        //jugador.setCollideWorldBounds(true);// hacemos que colisione con el borde del mundo
         
+        //jugador= this.physics.add.sprite(0,1150,"jugador"); //agregamos el jugador a la escena         
+        this.cameras.main.startFollow(jugador); 
         //Teclas
         cursors = this.input.keyboard.createCursorKeys();
+        this.physics.add.collider(jugador,this.pisos);
+
     }
 
     update () {
@@ -47,7 +60,7 @@ class scene1 extends Phaser.Scene {
         if (cursors.right.isDown) {  // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de 180
             jugador.setVelocityX(180); 
             jugador.anims.play("caminar",true);// reproduce la animación caminar
-            jugador.setOffset(35,18);
+            jugador.setOffset(35,14);
             if(jugador.flipX==true) {
                 jugador.x=jugador.x-45
             }
@@ -55,7 +68,7 @@ class scene1 extends Phaser.Scene {
          }else if (cursors.left.isDown) {
              jugador.setVelocityX(-180); // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de -180
              jugador.anims.play("caminar",true);// reproduce la animación caminar
-             jugador.setOffset(3,18);
+             jugador.setOffset(3,14);
             if(jugador.flipX==false) {
                 jugador.x=jugador.x+45
             }
@@ -63,9 +76,10 @@ class scene1 extends Phaser.Scene {
          }else {
             jugador.setVelocityX(0); // si no estan ninguna de estas teclas presionadas su velocidad es 0
             jugador.anims.play("detenido",true);
+            //jugador.setOffset(35,18);
          }
-         if (cursors.up.isDown && jugador.body.touching.down) {  /// si se presiona la tecla arriba y  el personaje esta tocando algo abajo salta
-            jugador.setVelocityY(-500);
+         if (cursors.up.isDown && (jugador.body.touching.down || jugador.body.onFloor())) {  /// si se presiona la tecla arriba y  el personaje esta tocando algo abajo salta
+            jugador.setVelocityY(-350);
             }
 
     }
