@@ -1,4 +1,7 @@
-class scene1 extends Phaser.Scene {
+import IScene from '../interfaces/IScene.js';
+import Player from '../classes/Player.js';
+
+export default class scene1 extends IScene {
 
     constructor () {
         super ("nivel1"); // nombre escena
@@ -17,22 +20,6 @@ class scene1 extends Phaser.Scene {
         this.fondo = this.add.tileSprite(0, 0, this.sys.game.config.width, this.sys.game.config.height, "fondo");
         this.fondo.setOrigin(0, 0);
 
-
-        //animaciones
-        this.anims.create({
-            key: "detenido", // nombre de la animacion
-            frames: this.anims.generateFrameNumbers("jugador",{start:0,end:6}),// desde que frame hasta que frame
-            frameRate:7,// velocidad de animacion
-            repeat:-1// si se va a reptir y cuantas veces, al estar en -1 se repite infinito
-        });
-
-        this.anims.create({
-            key: "caminar",
-            frames: this.anims.generateFrameNumbers("jugador",{start:16,end:23}),
-            frameRate:10,
-            repeat:-1
-        });
-
         //////////PISOS///////////////
         const map = this.make.tilemap({key:"tilemap"});
         const tileset = [ 
@@ -43,52 +30,21 @@ class scene1 extends Phaser.Scene {
         this.pisos = map.createLayer("Piso1",tileset);
         this.pisos.setCollisionByProperty({colision:true});
         
-
         //Jugador
-        jugador= this.physics.add.sprite(66,1150,"jugador"); //agregamos el jugador a la escena         
-        jugador.setScale(1);// escalamos el jugador
-        jugador.setSize(30,50); //Tamaño del Jugador
-        jugador.setOffset(35,18);
-
-
+        this.player = new Player(this, 66, 1150, "jugador");
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        this.cameras.main.startFollow(jugador);
+        this.cameras.main.startFollow(this.player);
         this.cameras.main.setZoom(3); 
 
         //Teclas
-        cursors = this.input.keyboard.createCursorKeys();
-        this.physics.add.collider(jugador,this.pisos);
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.physics.add.collider(this.player,this.pisos);
 
     }
 
     update () {
-        // manejo del jugador en el plano x
-        if (cursors.right.isDown) {  // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de 180
-            jugador.setVelocityX(180); 
-            jugador.anims.play("caminar",true);// reproduce la animación caminar
-            jugador.setOffset(35,14);
-            if(jugador.flipX==true) {
-                jugador.x=jugador.x-45
-            }
-           jugador.flipX=false;
-         }else if (cursors.left.isDown) {
-             jugador.setVelocityX(-180); // si la tecla derecha esta presionada move al personaje en el eje x con una velocidad de -180
-             jugador.anims.play("caminar",true);// reproduce la animación caminar
-             jugador.setOffset(3,14);
-            if(jugador.flipX==false) {
-                jugador.x=jugador.x+45
-            }
-            jugador.flipX=true; // espejar la imagen
-         }else {
-            jugador.setVelocityX(0); // si no estan ninguna de estas teclas presionadas su velocidad es 0
-            jugador.anims.play("detenido",true);
-            //jugador.setOffset(35,18);
-         }
-         if (cursors.up.isDown && (jugador.body.touching.down || jugador.body.onFloor())) {  /// si se presiona la tecla arriba y  el personaje esta tocando algo abajo salta
-            jugador.setVelocityY(-350);
-            }
-
+        this.player.move(this.cursors);
     }
 
 }
