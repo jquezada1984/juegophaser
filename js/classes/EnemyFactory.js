@@ -1,10 +1,13 @@
-import MovingEnemy from './MovingEnemy.js';
+import Xenomorph from './Xenomorph.js';
+import Yautja from './Yautja.js';
 
 export default class EnemyFactory {
     static createEnemy(type, scene, x, y) {
         switch (type) {
-            case 'moving':
-                return new MovingEnemy(scene, x, y, 'enemy', 100);
+            case 'xenomorph':
+                return new Xenomorph(scene, x, y);
+            case 'yautja':
+                return new Yautja(scene, x, y);
             default:
                 throw new Error('Unknown enemy type');
         }
