@@ -1,6 +1,8 @@
 import IScene from '../interfaces/IScene.js';
 import Player from '../classes/Player.js';
 import EnemyFactory from '../classes/EnemyFactory.js';
+import Xenomorph from '../classes/Xenomorph.js'; // Importa Xenomorph
+import Yautja from '../classes/Yautja.js';       // Importa Yautja
 
 export default class scene1 extends IScene {
 
@@ -12,8 +14,8 @@ export default class scene1 extends IScene {
         this.load.image("fondo",".//assets/rooms/Business-Center-Tileset-Pixel-Art4.png"); // decimos donde esta la imagen a phaser65.14
         this.load.spritesheet("jugador",".//assets/sprites/complet01.png",{ frameWidth: 65.14,frameHeight: 79}); // Cargamos la imagen del jugador
         //////////////////////////////////////////////
-        this.load.spritesheet("xenomorph",".//assets/sprites/rat-run-outline.png",{ frameWidth: 32,frameHeight: 32}); // Cargamos la imagen del jugador
-        
+        this.load.spritesheet("xenomorph",".//assets/sprites/rat-run-outline.png",{ frameWidth: 32,frameHeight: 30});
+        this.load.spritesheet("XenomorphAttack",".//assets/sprites/rat-attack-outline.png",{ frameWidth: 32,frameHeight: 32});
         //////////////////Pisos///////////
         this.load.image("Objetos",".//assets/rooms/Objetos.png"); // objetos en la pantalla
         this.load.image("Pisos",".//assets/rooms/Pisos.png"); // objetos en la pantalla
@@ -64,6 +66,15 @@ export default class scene1 extends IScene {
     }
 
     handlePlayerEnemyCollision(player, enemy) {
-        // Implementar lógica de colisión entre jugador y enemigo
+        if (enemy instanceof Xenomorph) {
+            enemy.attack(player);
+            player.isPushed = true;
+            this.time.delayedCall(300, () => {
+                player.isPushed = false;
+            });
+        }
+        if (player.health <= 0) {
+            this.scene.restart();
+        }
     }
 }

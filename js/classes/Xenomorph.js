@@ -8,6 +8,9 @@ export default class Xenomorph extends IEnemy {
         this.speed = 200;
         this.jumpHeight = -500;
         this.health = 50;
+        this.setSize(32,15);
+        this.setOffset(0,15);
+        this.isAttacking = false;
         this.initAnimations(scene);
     }
 
@@ -18,6 +21,14 @@ export default class Xenomorph extends IEnemy {
             frameRate: 8,
             repeat: -1
         });
+
+        scene.anims.create({
+            key: 'xenomorphAttack',
+            frames: scene.anims.generateFrameNumbers('XenomorphAttack', { start: 0, end: 5 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
         this.anims.play('xenomorphMove');
     }
 
@@ -33,6 +44,21 @@ export default class Xenomorph extends IEnemy {
     }
 
     attack(player) {
-        // Implementar lógica de ataque aquí
+        if (!this.isAttacking) {
+            this.isAttacking = true;
+            this.anims.play('xenomorphAttack', true);
+            player.health -= 20;
+            if (this.body.touching.right) {
+                player.setVelocityX(-300);
+            } else if (this.body.touching.left){
+                player.setVelocityX(300);
+            }
+            // Apply vertical push to simulate knockback
+            player.setVelocityY(-200);
+            this.scene.time.delayedCall(1000, () => {
+                this.isAttacking = false;
+                this.anims.play('xenomorphMove');
+            }, [], this);
+        }
     }
 }
