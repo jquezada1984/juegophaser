@@ -8,10 +8,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setOffset(35, 18);
         this.initAnimations(scene);
         this.speed = 120;
-        this.movimiento=45;
         this.jumpHeight = -350;
         this.health = 100;
-        this.maxHealth = 100; 
+        this.maxHealth = 100;
         this.healthBar = this.createHealthBar(scene, x, y);
         this.healthText = this.createHealthText(scene, x, y);
         this.isPushed = false;
@@ -34,33 +33,37 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    move(cursors) {
+    move(cursors, keys) {
         if (!this.isPushed) {
-            if (cursors.right.isDown) {
-                this.setVelocityX(Math.abs(this.speed));
-                this.anims.play("caminar", true);
-                this.setOffset(35, 14);
-                if (this.flipX) {
-                    this.x -= this.movimiento;
-                }
+            let horizontalVelocity = 0;
+
+            if (cursors.right.isDown || keys.D.isDown) {
+                horizontalVelocity += this.speed;
                 this.flipX = false;
-            } else if (cursors.left.isDown) {
-                this.setVelocityX(-Math.abs(this.speed));
-                this.anims.play("caminar", true);
-                this.setOffset(3, 14);
-                if (!this.flipX) {
-                    this.x += this.movimiento;
-                }
+            }
+            if (cursors.left.isDown || keys.A.isDown) {
+                horizontalVelocity -= this.speed;
                 this.flipX = true;
-            } else {
-                this.setVelocityX(0);
-                this.anims.play("detenido", true);
             }
 
-            if (cursors.up.isDown && (this.body.touching.down || this.body.onFloor())) {
+            this.setVelocityX(horizontalVelocity);
+
+            if ((cursors.up.isDown || keys.W.isDown) && (this.body.touching.down || this.body.onFloor())) {
                 this.setVelocityY(this.jumpHeight);
             }
+
+            if (horizontalVelocity !== 0) {
+                this.anims.play("caminar", true);
+                if (this.flipX) {
+                    this.setOffset(3, 14);
+                } else {
+                    this.setOffset(35, 14);
+                }
+            } else {
+                this.anims.play("detenido", true);
+            }
         }
+
         this.updateHealthBar();
         this.updateHealthText();
     }
