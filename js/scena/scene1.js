@@ -26,10 +26,6 @@ export default class scene1 extends IScene {
     }
 
     create () {
-        alert("¡Hola, jugador!");
-        alert("Estas a punto de experimentar el inicio de una historia fascinante");
-        alert("¡Diviértete!");
-
         this.fondo = this.add.tileSprite(0, 0, this.sys.game.config.width, this.sys.game.config.height, "fondo");
         this.fondo.setOrigin(0, 0);
 
