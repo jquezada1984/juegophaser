@@ -8,9 +8,12 @@ export default class IntroScene extends Phaser.Scene {
         this.load.image("intro2", "./assets/story/Inicio02.jpg");
         this.load.image("intro3", "./assets/story/Inicio03.jpg");
         this.load.image("intro4", "./assets/story/capitulo1.png");
+        this.load.audio('introSound', './assets/sonido/frankum__epic-intro-guitar.mp3');
     }
 
     create() {
+        this.sound.play('introSound', { volume: 1.0 });
+
         this.intro1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, "intro1");
         this.intro1.setAlpha(0);
         

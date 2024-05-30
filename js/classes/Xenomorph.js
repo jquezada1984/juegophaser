@@ -61,4 +61,11 @@ export default class Xenomorph extends IEnemy {
             }, [], this);
         }
     }
+
+    takeDamage(amount) {
+        this.health -= amount;
+        if (this.health <= 0) {
+            this.destroy();
+        }
+    }
 }
