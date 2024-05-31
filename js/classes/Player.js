@@ -6,7 +6,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setScale(1);
         this.setSize(28, 50);
         this.setOffset(35, 18);
-        this.initAnimations(scene);
         this.speed = 120;
         this.jumpHeight = -350;
         this.health = 100;
@@ -14,6 +13,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.healthBar = this.createHealthBar(scene, x, y);
         this.healthText = this.createHealthText(scene, x, y);
         this.isPushed = false;
+        this.isShooting = false;
+        this.isDying = false; // Nueva propiedad para gestionar el estado de muerte
         this.initAnimations(scene);
     }
 
@@ -31,10 +32,24 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 10,
             repeat: -1
         });
+
+        scene.anims.create({
+            key: "disparar",
+            frames: scene.anims.generateFrameNumbers("jugador", { start: 22, end: 25 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: "morir",
+            frames: scene.anims.generateFrameNumbers("jugador", { start: 32, end: 38 }), // Suponiendo que estos son los frames de la animación de morir
+            frameRate: 10,
+            repeat: 0
+        });
     }
 
     move(cursors, keys) {
-        if (!this.isPushed) {
+        if (!this.isPushed && !this.isShooting && !this.isDying) {
             let horizontalVelocity = 0;
 
             if (cursors.right.isDown || keys.D.isDown) {
@@ -78,7 +93,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     updateHealthBar() {
         this.healthBar.clear();
         this.healthBar.fillStyle(0x00ff00, 1);
-        this.healthBar.fillRect(this.x - 50, this.y - 75, this.health, 10);
+        this.healthBar.fillRect(this.x - 50, this.y - 75, (this.health / this.maxHealth) * 100, 10);
     }
 
     createHealthText(scene, x, y) {
@@ -91,5 +106,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     updateHealthText() {
         this.healthText.setText(`${this.health}/${this.maxHealth}`);
         this.healthText.setPosition(this.x - 50, this.y - 90);
+    }
+
+    shoot() {
+        if (!this.isShooting) {
+            this.isShooting = true;
+            this.anims.play("disparar", true).on('animationcomplete', () => {
+                this.isShooting = false;
+                this.anims.play("detenido", true);
+            });
+        }
+    }
+
+    die() {
+        this.isDying = true;
+        this.anims.play("morir", true);
     }
 }

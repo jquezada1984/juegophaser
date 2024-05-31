@@ -88,6 +88,7 @@ export default class scene1 extends IScene {
         this.player.move(this.input.keyboard.createCursorKeys(), this.input.keyboard.addKeys('W,A,S,D'));
 
         if (Phaser.Input.Keyboard.JustDown(this.spaceBar)){
+            this.player.shoot();
             this.shootBullet();
         }
 
@@ -111,7 +112,7 @@ export default class scene1 extends IScene {
             });
         }
         if (player.health <= 0) {
-            this.scene.restart();
+            this.triggerPlayerDeath();
         }
     }
 
@@ -137,4 +138,23 @@ export default class scene1 extends IScene {
             enemy.takeDamage(10); // Llamar a takeDamage del enemigo
         }
     }
+
+    triggerPlayerDeath() {
+        this.player.die();
+        this.cameras.main.flash(500, 255, 0, 0); // Efecto de parpadeo
+        this.time.delayedCall(500, () => {
+            this.showGameOverText();
+        });
+    }
+
+    showGameOverText() {
+        this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'Murió el jugador', {
+            fontSize: '64px',
+            fill: '#ff0000'
+        }).setOrigin(0.5);
+        this.time.delayedCall(2000, () => {
+            this.scene.restart();
+        });
+    }
+
 }
