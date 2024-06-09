@@ -1,5 +1,6 @@
 import Scene1 from './scena/scene1.js';
 import IntroScene from './scena/IntroScene.js';
+import MenuScene from './scena/MenuScene.js';
 
 export const config = {
     type: Phaser.AUTO,
@@ -16,7 +17,8 @@ export const config = {
             debug: true
         }
     },
-    scene: [IntroScene,Scene1]
+    // scene: [IntroScene,Scene1]
+    scene: [Scene1]
 };
 
 export default config;

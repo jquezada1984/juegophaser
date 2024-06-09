@@ -8,6 +8,7 @@ export default class Xenomorph extends IEnemy {
         this.speed = 200;
         this.jumpHeight = -500;
         this.health = 50;
+        this.setScale(3);
         this.setSize(32,15);
         this.setOffset(0,15);
         this.isAttacking = false;

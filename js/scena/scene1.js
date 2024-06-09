@@ -4,15 +4,15 @@ import EnemyFactory from '../classes/EnemyFactory.js';
 import Xenomorph from '../classes/Xenomorph.js'; // Importa Xenomorph
 import Yautja from '../classes/Yautja.js';       // Importa Yautja
 
-export default class scene1 extends IScene {
+export default class Scene1 extends IScene {
     score = 0;
     scoreText;
 
-    constructor () {
-        super ("nivel1"); // nombre escena
+    constructor() {
+        super("nivel1"); // nombre escena
     }
 
-    preload () {
+    preload() {
         // Carga de recursos
         this.load.image('item', './/assets/sprites/box.png'); // Imagen del objeto coleccionable
         this.load.image('overlay', './/assets/story/capitulo1.png'); // Imagen superpuesta
@@ -22,11 +22,12 @@ export default class scene1 extends IScene {
         this.load.spritesheet("XenomorphAttack", ".//assets/sprites/rat-attack-outline.png", { frameWidth: 32, frameHeight: 32 });
         this.load.image("Objetos", ".//assets/rooms/Objetos.png"); // Objetos en la pantalla
         this.load.image("Pisos", ".//assets/rooms/Pisos.png"); // Pisos en la pantalla
-        this.load.tilemapTiledJSON("tilemap", ".//assets/rooms/mapa.json") // Archivo JSON
+        this.load.image('bullet', './/assets/sprites/bullet.png'); // Imagen de la bala
+        this.load.tilemapTiledJSON("tilemap", ".//assets/rooms/mapa.json"); // Archivo JSON
         this.load.audio('cityAmbience', './assets/sonido/City Sounds.mp3');
     }
 
-    create () {
+    create() {
         this.sound.play('cityAmbience', { volume: 0.5, loop: true });
 
         this.fondo = this.add.tileSprite(0, 0, this.sys.game.config.width, this.sys.game.config.height, "fondo");
@@ -57,6 +58,9 @@ export default class scene1 extends IScene {
         // Enemigos
         this.enemies = [
             EnemyFactory.createEnemy('xenomorph', this, 100, 1150),
+            EnemyFactory.createEnemy('xenomorph', this, 900, 0),
+            EnemyFactory.createEnemy('xenomorph', this, 1500, 0),
+            EnemyFactory.createEnemy('xenomorph', this, 1750, 0),
         ];
 
         this.enemies.forEach(enemy => {
@@ -74,20 +78,27 @@ export default class scene1 extends IScene {
 
         // Crear grupo de balas
         this.bullets = this.physics.add.group({
+            classType: Phaser.Physics.Arcade.Image,
             defaultKey: 'bullet',
-            maxSize: 10
+            maxSize: 10,
+            runChildUpdate: true
         });
 
-        this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
-    
+        this.bullets.children.iterate(bullet => {
+            bullet.setCollideWorldBounds(true);
+            bullet.body.allowGravity = false; // Desactivar gravedad para las balas
+            bullet.on('worldbounds', this.resetBullet, this);
+        });
 
+        this.physics.add.collider(this.bullets, this.pisos, this.resetBullet, null, this);
+        this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
     }
 
-    update () {
+    update() {
         this.enemies.forEach(enemy => enemy.move());
         this.player.move(this.input.keyboard.createCursorKeys(), this.input.keyboard.addKeys('W,A,S,D'));
 
-        if (Phaser.Input.Keyboard.JustDown(this.spaceBar)){
+        if (Phaser.Input.Keyboard.JustDown(this.spaceBar)) {
             this.player.shoot();
             this.shootBullet();
         }
@@ -97,7 +108,6 @@ export default class scene1 extends IScene {
 
     collectItem(player, item) {
         item.disableBody(true, true);
-
         // Actualizar el puntaje
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
@@ -117,25 +127,33 @@ export default class scene1 extends IScene {
     }
 
     shootBullet() {
-        const bullet = this.bullets.get(this.player.x, this.player.y);
+        const bullet = this.bullets.get();
+
         if (bullet) {
-            bullet.setActive(true);
-            bullet.setVisible(true);
-            bullet.body.allowGravity = false;
+            bullet.enableBody(true, this.player.x, this.player.y, true, true);
+            bullet.setVelocity(0); // Resetear la velocidad antes de disparar
+            bullet.body.allowGravity = false; // Desactivar gravedad para la bala
             if (this.player.flipX) { // Si el jugador está mirando a la izquierda
                 bullet.setPosition(this.player.x - 20, this.player.y);
-                bullet.body.velocity.x = -500; // Velocidad de la bala hacia la izquierda
+                bullet.setVelocityX(-500); // Velocidad de la bala hacia la izquierda
             } else { // Si el jugador está mirando a la derecha
                 bullet.setPosition(this.player.x + 20, this.player.y);
-                bullet.body.velocity.x = 500; // Velocidad de la bala hacia la derecha
+                bullet.setVelocityX(500); // Velocidad de la bala hacia la derecha
             }
         }
     }
 
-    handleBulletEnemyCollision(bullet, enemy) {
+    resetBullet(bullet) {
         bullet.disableBody(true, true);
-        if (enemy instanceof Xenomorph) {
+    }
+
+    handleBulletEnemyCollision(bullet, enemy) {
+        bullet.disableBody(true, true); // Desactivar la bala
+        if (enemy instanceof Xenomorph || enemy instanceof Yautja) {
             enemy.takeDamage(10); // Llamar a takeDamage del enemigo
+            if (enemy.health <= 0) {
+                enemy.destroy(); // Destruir el enemigo si su salud llega a 0
+            }
         }
     }
 
@@ -156,5 +174,4 @@ export default class scene1 extends IScene {
             this.scene.restart();
         });
     }
-
 }

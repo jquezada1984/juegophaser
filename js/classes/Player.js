@@ -7,7 +7,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setSize(28, 50);
         this.setOffset(35, 18);
         this.speed = 120;
-        this.jumpHeight = -350;
+        this.jumpHeight = -450;
         this.health = 100;
         this.maxHealth = 100;
         this.healthBar = this.createHealthBar(scene, x, y);
