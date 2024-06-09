@@ -1,6 +1,6 @@
 export default class IntroScene extends Phaser.Scene {
     constructor() {
-        super("intro");
+        super("IntroScene");
     }
 
     preload() {
